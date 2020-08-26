@@ -46,6 +46,7 @@ with DAG('nci_db_backup',
 
         host=dea-db.nci.org.au
         datestring=$(date +%Y%m%d)
+        datestring_psql=$(date -d "yesterday" +%Y-%m-%d)
         file_prefix="${host}-${datestring}"
     ''')
 
@@ -144,5 +145,61 @@ with DAG('nci_db_backup',
 
     )
 
+    run_changes_csv_dump = SSHOperator(
+        task_id='dump_table_changes_to_csv',
+        command=COMMON + dedent("""
+            set -euo pipefail
+            IFS=$'\n\t'
+
+            tables=(
+                agdc.metadata_type
+                agdc.dataset_type
+                agdc.dataset
+            )
+
+            output_dir=$TMPDIR/pg_change_csvs_${datestring}
+            mkdir -p ${output_dir}
+            cd ${output_dir}
+
+            for table in ${tables[@]}; do
+                echo Dumping changes from $table
+                psql --quiet -c "\\copy (select * from $table where updated > '$datestring_psql' or added > '$datestring_psql' or archived > '$datestring_psql') to stdout with (format csv)" -h ${host} -d datacube | gzip -c - > $table_changes.csv.gz
+
+            done
+
+            psql --quiet -c "\\copy (select * from agdc.dataset_location where added > '$datestring_psql' or archived > '$datestring_psql') to stdout with (format csv)" -h ${host} -d datacube | gzip -c - > agdc.dataset_location_changes.csv.gz
+
+
+        """)
+    )
+
+    upload_change_csvs_to_s3 = SSHOperator(
+        task_id='upload_change_csvs_to_s3',
+        params={
+            'aws_conn': aws_conn.get_credentials(),
+        },
+        command=COMMON + dedent('''
+            export AWS_ACCESS_KEY_ID={{params.aws_conn.access_key}}
+            export AWS_SECRET_ACCESS_KEY={{params.aws_conn.secret_key}}
+
+
+            output_dir=$TMPDIR/pg_change_csvs_${datestring}
+            cd ${output_dir}
+
+            aws s3 sync ./ s3://nci-db-dump/csv-changes/${datestring}/ --content-encoding gzip --no-progress
+
+            # Upload md5sums last, as a marker that it's complete.
+            md5sum * > md5sums
+            aws s3 cp md5sums s3://nci-db-dump/csv-changes/${datestring}/
+
+            # Remove the CSV directory
+            cd ..
+            rm -rf ${output_dir}
+
+        ''')
+
+    )
+
     run_backup >> upload_to_s3
     run_csv_dump >> upload_csvs_to_s3
+    run_changes_csv_dump >> upload_change_csvs_to_s3
