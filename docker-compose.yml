@@ -6,23 +6,31 @@ services:
       - POSTGRES_USER=airflow
       - POSTGRES_PASSWORD=airflow
       - POSTGRES_DB=airflow
-      - PGDATA=/var/lib/postgresql/data/pgdata
+        #      - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
-      - ./pgdata:/var/lib/postgresql/data/pgdata
+      - pgdata:/var/lib/postgresql/data/pgdata
     logging:
       options:
         max-size: 10m
         max-file: "3"
+  setup-airflow:
+    image: geoscienceaustralia/airflow
+    depends_on:
+      - postgres
+    environment:
+      - FERNET_KEY=$FERNET_KEY
+    command: "airflow upgradedb && airflow connections --add --conn_id lpgs_gadi --conn_uri ssh://dra547@gadi.nci.org.au/ && airflow connections --add --conn_id dea_public_data_upload --conn_uri s3://foo:bar@dea-public-data-dev/"
   webserver:
     image: geoscienceaustralia/airflow
     restart: always
     depends_on:
       - postgres
+      - setup-airflow
     environment:
-      - LOAD_EX=n
+      # - LOAD_EX=n
       # Uncomment and add fernet key to encrypt/decrypt secrets. For details see
       # https://airflow.readthedocs.io/en/stable/howto/secure-connections.html
-      # - FERNET_KEY=<insert-fernet-key-here>
+      - FERNET_KEY=${FERNET_KEY}
       - EXECUTOR=Local
       - AIRFLOW__SMTP__SMTP_HOST=maildev
       - AIRFLOW__CORE__ENABLE_XCOM_PICKLING=False
@@ -47,3 +55,5 @@ services:
     image: maildev/maildev
     ports:
       - "1080:80"
+volumes:
+  pgdata:

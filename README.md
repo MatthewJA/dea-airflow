@@ -24,6 +24,8 @@ If you have Docker available, by far the easiest development setup is to use
 Docker Compose.
 
 ``` bash
+<insert-fernet-key-here>
+python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())' 
 docker-compose up
 
 docker-compose exec webserver /bin/bash
