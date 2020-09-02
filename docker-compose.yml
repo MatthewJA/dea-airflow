@@ -44,7 +44,9 @@ services:
       - ./dags:/opt/airflow/dags
       - ./plugins:/opt/airflow/plugins
       - ./scripts:/opt/airflow/scripts
+      - logs/:/opt/airflow/logs
       - ./requirements.txt:/opt/airflow/requirements.txt
+      - /dev/urandom:/dev/random   # Required to get non-blocking entropy source
     ports:
       - "8080:8080"
     command: webserver
@@ -68,7 +70,9 @@ services:
       - ./dags:/opt/airflow/dags
       - ./plugins:/opt/airflow/plugins
       - ./scripts:/opt/airflow/scripts
+      - logs/:/opt/airflow/logs
       - ./requirements.txt:/opt/airflow/requirements.txt
+      - /dev/urandom:/dev/random   # Required to get non-blocking entropy source
     command: scheduler
     ports:
       - "8793:8793"
@@ -83,3 +87,4 @@ services:
       - "1080:80"
 volumes:
   pgdata:
+  logs:
