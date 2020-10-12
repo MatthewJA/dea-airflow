@@ -58,8 +58,7 @@ def check_num_tasks(upstream_task_id, ti, **kwargs):
     otherwise continue.
     """
     response = ti.xcom_pull(task_ids=upstream_task_id)
-    last_line = response.split('\n')
-    num_tasks = int(last_line)
+    num_tasks = int(response)
 
     if num_tasks == 0:
         logging.info("Nothing to do, stopping.")
@@ -128,8 +127,9 @@ with dag:
             timeout=60 * 60 * 2,
             params={'product': product},
         )
+        count_task_id = f'count_num_tasks_{product}'
         count_num_tasks = SSHOperator(
-            task_id=f'count_num_tasks_{product}',
+            task_id=count_task_id,
             command=COMMON + dedent('''
                 {% set file_list = work_dir + '/' + params.product + '_file_list.txt' -%}
                 test -f {{file_list}}
@@ -142,7 +142,7 @@ with dag:
         check_for_work = ShortCircuitOperator(
             task_id=f"check_for_work_{product}",
             python_callable=check_num_tasks,
-            op_args=[f'count_num_tasks_{product}'],
+            op_args=[count_task_id],
             provide_context=True,
         )
         check_for_work.doc_md = dedent("""
