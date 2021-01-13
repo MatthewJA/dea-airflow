@@ -6,7 +6,7 @@ A bit of a playground for new development.
 from airflow import DAG
 from datetime import datetime
 
-from airflow.contrib.operators.ssh_operator import SSHOperator
+from airflow.providers.ssh.operators.ssh import SSHOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.email_operator import EmailOperator
 

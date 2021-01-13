@@ -9,7 +9,7 @@ from datetime import datetime
 from textwrap import dedent
 
 from airflow import DAG, AirflowException
-from airflow.contrib.sensors.aws_sqs_sensor import SQSHook
+from airflow.providers.amazon.sensors.sqs import SQSHook
 from airflow.operators.python_operator import PythonOperator
 
 default_args = {

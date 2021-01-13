@@ -9,7 +9,7 @@
 from textwrap import dedent
 
 from airflow import DAG
-from airflow.contrib.operators.ssh_operator import SSHOperator
+from airflow.providers.ssh.operators.ssh import SSHOperator
 from sensors.pbs_job_complete_sensor import PBSJobSensor
 from nci_common import c2_default_args, c2_schedule_interval, MINUTES
 

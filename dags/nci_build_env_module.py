@@ -3,7 +3,7 @@
 
 """
 from airflow import DAG
-from airflow.contrib.operators.ssh_operator import SSHOperator
+from airflow.providers.ssh.operators.ssh import SSHOperator
 from datetime import datetime, timedelta
 
 default_args = {

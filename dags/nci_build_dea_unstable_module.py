@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 import pendulum
 from airflow import DAG
-from airflow.contrib.operators.ssh_operator import SSHOperator
+from airflow.providers.ssh.operators.ssh import SSHOperator
 from airflow.operators.email_operator import EmailOperator
 
 local_tz = pendulum.timezone("Australia/Canberra")

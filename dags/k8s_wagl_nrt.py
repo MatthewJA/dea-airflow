@@ -8,17 +8,17 @@ import json
 
 from airflow import DAG
 
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from airflow.contrib.operators.kubernetes_pod_operator import Resources
+from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import Resources
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
-from airflow.contrib.sensors.aws_sqs_sensor import SQSSensor
-from airflow.contrib.hooks.aws_sns_hook import AwsSnsHook
+from airflow.providers.amazon.sensors.sqs import SQSSensor
+from airflow.providers.amazon.aws.hooks.sns import AwsSnsHook
 from airflow.kubernetes.secret import Secret
 from airflow.kubernetes.volume import Volume
 from airflow.kubernetes.volume_mount import VolumeMount
 from airflow.hooks.S3_hook import S3Hook
-from airflow.contrib.hooks.aws_sqs_hook import SQSHook
+from airflow.providers.amazon.aws.hooks.sqs import SQSHook
 from airflow.utils.trigger_rule import TriggerRule
 
 import kubernetes.client.models as k8s

@@ -26,9 +26,9 @@ from textwrap import dedent
 
 import pendulum
 from airflow import DAG, configuration
-from airflow.contrib.hooks.aws_hook import AwsHook
-from airflow.contrib.operators.sftp_operator import SFTPOperator, SFTPOperation
-from airflow.contrib.operators.ssh_operator import SSHOperator
+from airflow.providers.amazon.aws.hooks.base_aws import AwsBaseHook
+from airflow.providers.sftp.operators.sftp import SFTPOperator, SFTPOperation
+from airflow.providers.ssh.operators.ssh import SSHOperator
 
 local_tz = pendulum.timezone("Australia/Canberra")
 

@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.sensors.s3_key_sensor import S3KeySensor
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from airflow.kubernetes.secret import Secret
 from airflow.kubernetes.volume import Volume
 from airflow.kubernetes.volume_mount import VolumeMount

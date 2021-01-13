@@ -14,7 +14,7 @@ This DAG executes everything using Gadi at the NCI.
 from textwrap import dedent
 
 from airflow import DAG
-from airflow.contrib.operators.ssh_operator import SSHOperator
+from airflow.providers.ssh.operators.ssh import SSHOperator
 from airflow.sensors.external_task_sensor import ExternalTaskSensor
 
 from nci_common import c2_schedule_interval, c2_default_args, DAYS

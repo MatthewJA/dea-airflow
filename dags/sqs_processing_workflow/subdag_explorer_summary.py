@@ -5,7 +5,7 @@ This subdag can be called by other dags
 
 from airflow import DAG
 from textwrap import dedent
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from airflow.kubernetes.secret import Secret
 from sqs_processing_workflow.env_cfg import INDEXING_PRODUCTS, NODE_AFFINITY
 from sqs_processing_workflow.images import EXPLORER_IMAGE
