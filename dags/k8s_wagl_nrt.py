@@ -9,10 +9,9 @@ import json
 from airflow import DAG
 
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
-from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import Resources
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
-from airflow.providers.amazon.sensors.sqs import SQSSensor
+from airflow.providers.amazon.aws.sensors.sqs import SQSSensor
 from airflow.providers.amazon.aws.hooks.sns import AwsSnsHook
 from airflow.kubernetes.secret import Secret
 from airflow.kubernetes.volume import Volume

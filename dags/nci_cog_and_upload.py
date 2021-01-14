@@ -231,7 +231,7 @@ with dag:
 
         )
 
-        aws_connection = AwsHook(aws_conn_id='dea_public_data_upload')
+        aws_connection = AwsBaseHook(aws_conn_id='dea_public_data_upload', client_type='s3')
         upload_to_s3 = SSHOperator(
             task_id=f'upload_to_s3_{product}',
             command=COMMON + dedent("""

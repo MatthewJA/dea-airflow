@@ -12,7 +12,7 @@ from airflow import configuration
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.subdag_operator import SubDagOperator
-from airflow.providers.amazon.sensors.sqs import SQSSensor
+from airflow.providers.amazon.aws.sensors.sqs import SQSSensor
 from airflow.providers.amazon.aws.hooks.sqs import SQSHook
 
 
